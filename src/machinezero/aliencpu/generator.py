@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 import random
+
 from .architecture import ArchitectureSpec, OpcodeSpec, architecture_id_from_payload
 
 OPS = {
@@ -26,7 +28,15 @@ def generate_architecture(seed: int) -> ArchitectureSpec:
             updates_zero=has_zero and op in {'ADD','SUB','XOR','AND','OR','NOT','SHL','SHR','MOV','LOAD_IMMEDIATE'} and rng.random()<.8,
             updates_carry=has_carry and op in {'ADD','SUB','SHL','SHR'} and rng.random()<.75,
         ))
-    base=dict(seed=seed,word_bits=word_bits,num_registers=num_registers,memory_size=0,instruction_width=3,
-              has_zero_flag=has_zero,has_carry_flag=has_carry,opcodes=tuple(specs))
+    base = {
+        "seed": seed,
+        "word_bits": word_bits,
+        "num_registers": num_registers,
+        "memory_size": 0,
+        "instruction_width": 3,
+        "has_zero_flag": has_zero,
+        "has_carry_flag": has_carry,
+        "opcodes": tuple(specs),
+    }
     payload={**base,'opcodes':[s.__dict__ for s in specs]}
     return ArchitectureSpec(architecture_id=architecture_id_from_payload(payload), **base)

@@ -1,8 +1,13 @@
 from __future__ import annotations
+
 import random
-from .base import Explorer,DiscoveryResult
-from machinezero.aliencpu.state import CPUState
+
 from machinezero.aliencpu.instruction import Instruction
+from machinezero.aliencpu.state import CPUState
+
+from .base import DiscoveryResult, Explorer
+
+
 class RandomExplorer(Explorer):
     def discover(self,oracle,budget:int,seed:int=0)->DiscoveryResult:
         rng=random.Random(seed); out=[]; mask=(1<<oracle.word_bits)-1

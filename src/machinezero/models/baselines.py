@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 import random
+
 from machinezero.aliencpu.state import CPUState
+
 
 class RandomStatePredictor:
     def __init__(self,word_bits:int,num_registers:int,seed:int=0):

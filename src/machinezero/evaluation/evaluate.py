@@ -1,19 +1,26 @@
 from __future__ import annotations
-import argparse,json,random
+
+import argparse
+import json
+import random
 from pathlib import Path
+
 import torch
+
+from machinezero.aliencpu.generator import generate_architecture
+from machinezero.aliencpu.instruction import Instruction
+from machinezero.aliencpu.oracle import HiddenOracle
+from machinezero.aliencpu.simulator import AlienCPU
+from machinezero.aliencpu.state import CPUState
+from machinezero.data.splits import make_splits
+from machinezero.discovery.active import ModelExplorer
+from machinezero.discovery.coverage import CoverageExplorer
+from machinezero.discovery.random import RandomExplorer
 from machinezero.models.checkpoint import load_checkpoint
 from machinezero.models.prediction import predict_state
-from machinezero.data.splits import make_splits
-from machinezero.aliencpu.generator import generate_architecture
-from machinezero.aliencpu.simulator import AlienCPU
-from machinezero.aliencpu.oracle import HiddenOracle
-from machinezero.aliencpu.state import CPUState
-from machinezero.aliencpu.instruction import Instruction
-from machinezero.discovery.random import RandomExplorer
-from machinezero.discovery.coverage import CoverageExplorer
-from machinezero.discovery.active import ModelExplorer
+
 from .metrics import compare_states
+
 
 def sample_query(rng,spec):
  s=CPUState([rng.randint(0,spec.mask) for _ in range(spec.num_registers)],rng.randint(0,1),rng.randint(0,1),0); sp=rng.choice(spec.opcodes)

@@ -1,9 +1,12 @@
-import torch, pytest
-from machinezero.aliencpu.generator import generate_architecture
-from machinezero.aliencpu.simulator import AlienCPU
+import pytest
+import torch
+
 from machinezero.aliencpu.batched_simulator import BatchedAlienCPU
-from machinezero.aliencpu.state import CPUState
+from machinezero.aliencpu.generator import generate_architecture
 from machinezero.aliencpu.instruction import Instruction
+from machinezero.aliencpu.simulator import AlienCPU
+from machinezero.aliencpu.state import CPUState
+
 
 def test_batched_matches_scalar():
  spec=generate_architecture(123); scalar=AlienCPU(spec); batch=BatchedAlienCPU(spec,'cpu')

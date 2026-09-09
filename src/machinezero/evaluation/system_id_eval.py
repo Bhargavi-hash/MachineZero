@@ -1,15 +1,20 @@
 from __future__ import annotations
-import argparse,json,random
+
+import argparse
+import json
+import random
 from pathlib import Path
-from machinezero.data.splits import make_splits
+
 from machinezero.aliencpu.generator import generate_architecture
-from machinezero.aliencpu.simulator import AlienCPU
 from machinezero.aliencpu.oracle import HiddenOracle
-from machinezero.discovery.random import RandomExplorer
+from machinezero.aliencpu.simulator import AlienCPU
+from machinezero.data.splits import make_splits
 from machinezero.discovery.coverage import CoverageExplorer
-from machinezero.models.system_id import HypothesisPredictor
+from machinezero.discovery.random import RandomExplorer
 from machinezero.evaluation.evaluate import sample_query
 from machinezero.evaluation.metrics import compare_states
+from machinezero.models.system_id import HypothesisPredictor
+
 
 def evaluate(budgets=(0,1,2,5,10,20,30),queries_per_arch=40):
     splits=make_splits(202600,48,8,8); rows=[]

@@ -1,8 +1,9 @@
 from machinezero.aliencpu.generator import generate_architecture
-from machinezero.aliencpu.simulator import AlienCPU
 from machinezero.aliencpu.oracle import HiddenOracle
+from machinezero.aliencpu.simulator import AlienCPU
 from machinezero.discovery.coverage import CoverageExplorer
 from machinezero.models.system_id import HypothesisPredictor
+
 
 def test_hypotheses_shrink_with_observations():
     spec=generate_architecture(11); oracle=HiddenOracle(AlienCPU(spec)); ctx=CoverageExplorer().discover(oracle,20).experiments

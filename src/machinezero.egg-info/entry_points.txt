@@ -1,0 +1,2 @@
+[console_scripts]
+machinezero = machinezero.cli:app

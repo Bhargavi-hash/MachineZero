@@ -1,12 +1,18 @@
 from __future__ import annotations
-import argparse,time,json
+
+import argparse
+import json
+import time
 from pathlib import Path
+
 import torch
-from machinezero.aliencpu.generator import generate_architecture
-from machinezero.aliencpu.simulator import AlienCPU
+
 from machinezero.aliencpu.batched_simulator import BatchedAlienCPU
-from machinezero.aliencpu.state import CPUState
+from machinezero.aliencpu.generator import generate_architecture
 from machinezero.aliencpu.instruction import Instruction
+from machinezero.aliencpu.simulator import AlienCPU
+from machinezero.aliencpu.state import CPUState
+
 
 def bench_scalar(spec,n:int):
     cpu=AlienCPU(spec); states=[CPUState([(i+j)&spec.mask for j in range(spec.num_registers)]) for i in range(n)]; ins=[Instruction(spec.opcodes[i%len(spec.opcodes)].opcode,i%spec.num_registers,(i+1)%spec.num_registers) for i in range(n)]

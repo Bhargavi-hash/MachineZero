@@ -1,7 +1,10 @@
 from __future__ import annotations
-from .base import Explorer,DiscoveryResult
-from machinezero.aliencpu.state import CPUState
+
 from machinezero.aliencpu.instruction import Instruction
+from machinezero.aliencpu.state import CPUState
+
+from .base import DiscoveryResult, Explorer
+
 
 class CoverageExplorer(Explorer):
     '''Deterministic probes designed to separate common ALU hypotheses.'''

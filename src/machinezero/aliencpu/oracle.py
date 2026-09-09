@@ -1,7 +1,9 @@
 from __future__ import annotations
+
+from .instruction import Instruction
 from .simulator import AlienCPU
 from .state import CPUState
-from .instruction import Instruction
+
 
 class HiddenOracle:
     '''Restricted black-box interface used by discovery agents.'''

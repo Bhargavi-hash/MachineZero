@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from machinezero.aliencpu.state import CPUState
+
 from machinezero.aliencpu.instruction import Instruction
 from machinezero.aliencpu.oracle import HiddenOracle
+from machinezero.aliencpu.state import CPUState
 
 Experiment=tuple[CPUState,Instruction,CPUState]
 

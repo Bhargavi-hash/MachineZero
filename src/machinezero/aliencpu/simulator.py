@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from .architecture import ArchitectureSpec, OpcodeSpec
 from .instruction import Instruction
 from .state import CPUState
+
 
 class AlienCPU:
     def __init__(self, spec: ArchitectureSpec):
@@ -44,9 +46,8 @@ class AlienCPU:
         elif op=='LOAD_IMMEDIATE': result=ins.b&m; dst=ins.a%self.spec.num_registers
         elif op=='COMPARE':
             result=(old-rhs)&m; carry=int(old>=rhs)
-        elif op=='JMP': out.pc=ins.a&m
-        elif op=='JZ':
-            if out.zero: out.pc=ins.a&m
+        elif op == "JMP" or (op == "JZ" and out.zero):
+            out.pc = ins.a & m
         if result is not None and op!='COMPARE': out.registers[dst]=result&m
         if sp.updates_zero and result is not None: out.zero=int((result&m)==0)
         if sp.updates_carry: out.carry=carry

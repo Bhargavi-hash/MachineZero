@@ -1,12 +1,18 @@
 from __future__ import annotations
-import argparse,random,torch
+
+import argparse
+import random
+
+import torch
+
 from machinezero.aliencpu.generator import generate_architecture
-from machinezero.aliencpu.simulator import AlienCPU
-from machinezero.aliencpu.oracle import HiddenOracle
-from machinezero.aliencpu.state import CPUState
 from machinezero.aliencpu.instruction import Instruction
+from machinezero.aliencpu.oracle import HiddenOracle
+from machinezero.aliencpu.simulator import AlienCPU
+from machinezero.aliencpu.state import CPUState
 from machinezero.discovery.coverage import CoverageExplorer
 from machinezero.models.system_id import HypothesisPredictor
+
 
 def same(a,b): return a.registers==b.registers and a.zero==b.zero and a.carry==b.carry
 

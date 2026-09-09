@@ -1,9 +1,16 @@
 from __future__ import annotations
-import random, torch
-from .base import Explorer,DiscoveryResult
-from machinezero.aliencpu.state import CPUState
+
+import random
+
+import torch
+
 from machinezero.aliencpu.instruction import Instruction
+from machinezero.aliencpu.state import CPUState
 from machinezero.data.encoding import encode_transition
+
+from .base import DiscoveryResult, Explorer
+
+
 class ModelExplorer(Explorer):
     def __init__(self,model,device='cpu',candidates:int=24,mc_samples:int=5): self.model=model; self.device=device; self.candidates=candidates; self.mc_samples=mc_samples
     def discover(self,oracle,budget:int,seed:int=0)->DiscoveryResult:

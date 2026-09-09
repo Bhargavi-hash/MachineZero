@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 from collections import Counter
-from dataclasses import replace
+
 from machinezero.aliencpu.architecture import ArchitectureSpec, OpcodeSpec
 from machinezero.aliencpu.instruction import Instruction
-from machinezero.aliencpu.state import CPUState
 from machinezero.aliencpu.simulator import AlienCPU
+from machinezero.aliencpu.state import CPUState
 
 OPS_ARITY={'MOV':2,'ADD':2,'SUB':2,'XOR':2,'AND':2,'OR':2,'NOT':1,'SHL':1,'SHR':1,'LOAD_IMMEDIATE':2,'COMPARE':2,'JMP':1,'JZ':1}
 

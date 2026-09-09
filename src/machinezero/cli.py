@@ -1,16 +1,20 @@
 from __future__ import annotations
-import json,random
+
+import json
+import random
 from pathlib import Path
+
 import typer
 from rich.console import Console
 from rich.table import Table
+
 from machinezero.aliencpu.generator import generate_architecture
-from machinezero.aliencpu.simulator import AlienCPU
-from machinezero.aliencpu.oracle import HiddenOracle
-from machinezero.aliencpu.state import CPUState
 from machinezero.aliencpu.instruction import Instruction
-from machinezero.discovery.random import RandomExplorer
+from machinezero.aliencpu.oracle import HiddenOracle
+from machinezero.aliencpu.simulator import AlienCPU
+from machinezero.aliencpu.state import CPUState
 from machinezero.discovery.coverage import CoverageExplorer
+from machinezero.discovery.random import RandomExplorer
 from machinezero.models.system_id import HypothesisPredictor
 
 app=typer.Typer(no_args_is_help=True,help='MachineZero: learning to understand computers never seen before.')
@@ -53,7 +57,9 @@ def evaluate(checkpoint:str=typer.Option('',help='Optional Transformer checkpoin
         r=run(); Path('results/system_id_eval.json').write_text(json.dumps(r,indent=2))
 @app.command()
 def benchmark(n:int=typer.Option(20000)):
-    import subprocess, sys, os
+    import os
+    import subprocess
+    import sys
     env=dict(os.environ); env['PYTHONPATH']=str(Path(__file__).resolve().parents[2])
     subprocess.run([sys.executable,'benchmarks/benchmark_simulator.py','--n',str(n)],check=True,env=env)
 

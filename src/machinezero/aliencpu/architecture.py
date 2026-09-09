@@ -1,7 +1,9 @@
 from __future__ import annotations
-from dataclasses import dataclass, asdict
+
+import hashlib
+import json
+from dataclasses import asdict, dataclass
 from typing import Literal
-import json, hashlib
 
 Operation = Literal['MOV','ADD','SUB','XOR','AND','OR','NOT','SHL','SHR','LOAD_IMMEDIATE','COMPARE','JMP','JZ']
 

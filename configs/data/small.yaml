@@ -1,0 +1,6 @@
+base_seed: 202600
+train_architectures: 48
+validation_architectures: 8
+test_architectures: 8
+samples_per_architecture: 48
+max_context: 5

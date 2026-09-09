@@ -1,7 +1,8 @@
 from machinezero.aliencpu.generator import generate_architecture
+from machinezero.aliencpu.instruction import Instruction
 from machinezero.aliencpu.simulator import AlienCPU
 from machinezero.aliencpu.state import CPUState
-from machinezero.aliencpu.instruction import Instruction
+
 
 def find(spec,name): return next(x for x in spec.opcodes if x.operation==name)
 def test_wrap_and_add():

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 import torch
+
 from .architecture import ArchitectureSpec
 
 OP_IDS={'MOV':0,'ADD':1,'SUB':2,'XOR':3,'AND':4,'OR':5,'NOT':6,'SHL':7,'SHR':8,'LOAD_IMMEDIATE':9,'COMPARE':10,'JMP':11,'JZ':12}
