@@ -1,0 +1,5 @@
+seed: 2026
+batch_size: 64
+learning_rate: 0.0005
+epochs: 4
+cpu_only: false

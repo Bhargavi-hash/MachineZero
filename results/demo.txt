@@ -1,0 +1,44 @@
+MachineZero deterministic demo
+AlienCPU #925303
+Registers: 6
+Word width: 8 bits
+Opcodes: 8
+Architecture semantics: HIDDEN
+Seen during training: NO (demo uses black-box system identification)
+
+Discovery budget: 20
+Selected experiments:
+  01/20 8F 00 01  [3, 5, 0, 0, 0, 0] -> [3, 3, 0, 0, 0, 0]
+  02/20 6C 01 02  [0, 3, 5, 0, 0, 0] -> [0, 3, 8, 0, 0, 0]
+  03/20 C9 02 03  [0, 0, 3, 5, 0, 0] -> [0, 0, 254, 5, 0, 0]
+  04/20 93 03 04  [0, 0, 0, 3, 5, 0] -> [0, 0, 0, 3, 6, 0]
+  05/20 8D 04 05  [0, 0, 0, 0, 3, 5] -> [0, 0, 0, 0, 5, 5]
+  06/20 D8 05 00  [5, 0, 0, 0, 0, 3] -> [5, 0, 0, 0, 0, 6]
+  07/20 BC 00 01  [3, 5, 0, 0, 0, 0] -> [1, 5, 0, 0, 0, 0]
+  08/20 C7 01 02  [0, 3, 5, 0, 0, 0] -> [0, 3, 5, 0, 0, 0]
+
+Learned hypotheses:
+  opcode 6C: likely ADD, candidates=1, confidence=1.00
+  opcode C9: likely SUB, candidates=1, confidence=1.00
+  opcode D8: likely SHL, candidates=1, confidence=1.00
+  opcode BC: likely SHR, candidates=1, confidence=1.00
+  opcode 8F: likely MOV, candidates=2, confidence=1.00
+  opcode 93: likely XOR, candidates=2, confidence=1.00
+
+Held-out transition:
+  instruction: 6C 05 03
+  predicted: [40, 169, 31, 87, 27, 132] Z= 0 C= 1
+  actual:    [40, 169, 31, 87, 27, 132] Z= 0 C= 1
+  EXACT MATCH
+
+Held-out 3-instruction program:
+  6C 00 01
+  C9 01 02
+  D8 02 03
+  predicted final: [253, 58, 132, 2, 6, 61] Z= 0 C= 0
+  actual final:    [253, 58, 132, 2, 6, 61] Z= 0 C= 0
+  EXACT MATCH
+
+Model: enumerative black-box system identifier
+Transformer checkpoint: separate baseline, 1,103,938 parameters
+Device: cpu

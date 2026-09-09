@@ -1,0 +1,14 @@
+{'model': 'system_id', 'explorer': 'random', 'budget': 0, 'architectures': 8, 'queries': 320, 'exact': 0.16875, 'register_accuracy': 0.8623325892857169, 'flag_accuracy': 0.8203125}
+{'model': 'system_id', 'explorer': 'random', 'budget': 1, 'architectures': 8, 'queries': 320, 'exact': 0.253125, 'register_accuracy': 0.879527529761907, 'flag_accuracy': 0.84375}
+{'model': 'system_id', 'explorer': 'random', 'budget': 2, 'architectures': 8, 'queries': 320, 'exact': 0.265625, 'register_accuracy': 0.8836904761904785, 'flag_accuracy': 0.8265625}
+{'model': 'system_id', 'explorer': 'random', 'budget': 5, 'architectures': 8, 'queries': 320, 'exact': 0.43125, 'register_accuracy': 0.9214806547619061, 'flag_accuracy': 0.8453125}
+{'model': 'system_id', 'explorer': 'random', 'budget': 10, 'architectures': 8, 'queries': 320, 'exact': 0.503125, 'register_accuracy': 0.9449479166666677, 'flag_accuracy': 0.846875}
+{'model': 'system_id', 'explorer': 'random', 'budget': 20, 'architectures': 8, 'queries': 320, 'exact': 0.809375, 'register_accuracy': 0.9789992559523814, 'flag_accuracy': 0.9390625}
+{'model': 'system_id', 'explorer': 'random', 'budget': 30, 'architectures': 8, 'queries': 320, 'exact': 0.884375, 'register_accuracy': 0.9937127976190478, 'flag_accuracy': 0.9546875}
+{'model': 'system_id', 'explorer': 'coverage', 'budget': 0, 'architectures': 8, 'queries': 320, 'exact': 0.16875, 'register_accuracy': 0.8623325892857169, 'flag_accuracy': 0.8203125}
+{'model': 'system_id', 'explorer': 'coverage', 'budget': 1, 'architectures': 8, 'queries': 320, 'exact': 0.25625, 'register_accuracy': 0.8843229166666688, 'flag_accuracy': 0.8375}
+{'model': 'system_id', 'explorer': 'coverage', 'budget': 2, 'architectures': 8, 'queries': 320, 'exact': 0.278125, 'register_accuracy': 0.8956696428571449, 'flag_accuracy': 0.8015625}
+{'model': 'system_id', 'explorer': 'coverage', 'budget': 5, 'architectures': 8, 'queries': 320, 'exact': 0.365625, 'register_accuracy': 0.9296130952380965, 'flag_accuracy': 0.7828125}
+{'model': 'system_id', 'explorer': 'coverage', 'budget': 10, 'architectures': 8, 'queries': 320, 'exact': 0.509375, 'register_accuracy': 0.9647953869047623, 'flag_accuracy': 0.8078125}
+{'model': 'system_id', 'explorer': 'coverage', 'budget': 20, 'architectures': 8, 'queries': 320, 'exact': 0.9, 'register_accuracy': 0.9962053571428571, 'flag_accuracy': 0.95625}
+{'model': 'system_id', 'explorer': 'coverage', 'budget': 30, 'architectures': 8, 'queries': 320, 'exact': 0.940625, 'register_accuracy': 0.9963541666666667, 'flag_accuracy': 0.98125}

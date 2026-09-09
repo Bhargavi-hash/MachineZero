@@ -1,0 +1,124 @@
+{
+  "checkpoint": "checkpoints/model.pt",
+  "device": "cpu",
+  "held_out_test_seeds": [
+    202656,
+    202657,
+    202658,
+    202659,
+    202660,
+    202661,
+    202662,
+    202663
+  ],
+  "results": [
+    {
+      "explorer": "random",
+      "budget": 0,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.00601438492063492,
+      "flag_accuracy": 0.8645833333333334
+    },
+    {
+      "explorer": "random",
+      "budget": 1,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.004340277777777777,
+      "flag_accuracy": 0.8333333333333334
+    },
+    {
+      "explorer": "random",
+      "budget": 2,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.004526289682539683,
+      "flag_accuracy": 0.84375
+    },
+    {
+      "explorer": "random",
+      "budget": 5,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.0027901785714285715,
+      "flag_accuracy": 0.8697916666666666
+    },
+    {
+      "explorer": "random",
+      "budget": 10,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.00496031746031746,
+      "flag_accuracy": 0.875
+    },
+    {
+      "explorer": "random",
+      "budget": 20,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.001736111111111111,
+      "flag_accuracy": 0.8802083333333334
+    },
+    {
+      "explorer": "coverage",
+      "budget": 0,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.00601438492063492,
+      "flag_accuracy": 0.8645833333333334
+    },
+    {
+      "explorer": "coverage",
+      "budget": 1,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.006944444444444444,
+      "flag_accuracy": 0.828125
+    },
+    {
+      "explorer": "coverage",
+      "budget": 2,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.003038194444444444,
+      "flag_accuracy": 0.84375
+    },
+    {
+      "explorer": "coverage",
+      "budget": 5,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.005208333333333333,
+      "flag_accuracy": 0.8333333333333334
+    },
+    {
+      "explorer": "coverage",
+      "budget": 10,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.004278273809523809,
+      "flag_accuracy": 0.7291666666666666
+    },
+    {
+      "explorer": "coverage",
+      "budget": 20,
+      "architectures": 8,
+      "queries": 96,
+      "exact": 0.0,
+      "register_accuracy": 0.001488095238095238,
+      "flag_accuracy": 0.8177083333333334
+    }
+  ]
+}
