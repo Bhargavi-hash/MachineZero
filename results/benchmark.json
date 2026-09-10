@@ -1,7 +1,7 @@
 {
   "n": 20000,
-  "scalar_python_tps": 1003894.9114776007,
-  "batched_torch_cpu_tps": 11641782.3569576,
+  "scalar_python_tps": 903437.6886625193,
+  "batched_torch_cpu_tps": 6349223.684501158,
   "cuda_available": false,
   "batched_torch_cuda_tps": null
 }
