@@ -24,122 +24,195 @@ execute to verify
 
 ## Overview
 
-The core environment is **AlienCPU**, a deterministic generator for synthetic CPUs with randomized opcode assignments, word width, register count, instruction subsets, operand ordering, and flag behavior. Ground-truth semantics remain inside the simulator; discovery code sees only black-box transitions.
+The core benchmark is **AlienCPU**, a deterministic generator for synthetic CPUs with randomized opcode assignments, word width, register count, instruction subsets, operand ordering, and flag behavior. Ground-truth semantics remain inside the simulator; discovery code sees only black-box transitions.
 
-The repository currently contains two modeling paths:
+The repository contains three complementary reasoning paths:
 
-- a compact 1,103,938-parameter Transformer baseline trained on structured transition contexts;
-- an enumerative black-box system-identification baseline that filters semantic hypotheses from observed experiments.
+- a **1,182,064-parameter structured semantic Transformer** trained across procedurally generated architectures;
+- a transparent **enumerative system-identification baseline** that removes hypotheses inconsistent with observed experiments;
+- three experiment selectors: **RandomExplorer**, **CoverageExplorer**, and a learned **ModelExplorer** based on predictive semantic uncertainty.
 
-The second model currently provides the strongest measured MVP result and is used by the deterministic demo. The first neural checkpoint is intentionally retained even though its current held-out exact accuracy is poor.
+The strongest deterministic demo currently uses the transparent system-identification path. The learned model is evaluated separately and now shows a clear improvement as informative context becomes available.
 
 ## Why this exists
 
-Instruction semantic inference, system identification, neural execution, and reverse engineering already have substantial prior work. MachineZero focuses on a controlled question: **cross-architecture generalization under a strict interaction budget**, with complete synthetic ground truth and executable evaluation.
+Instruction semantic inference, active system identification, neural execution, meta-learning, and reverse engineering already have substantial prior work. MachineZero focuses on a controlled question:
+
+**Can a learner generalize across architectures whose semantics are permuted, actively probe a new machine, and improve under a strict interaction budget?**
+
+Synthetic architectures make that question measurable because the benchmark has complete hidden ground truth while still enforcing executable train/test isolation.
 
 ## How AlienCPU works
 
-Each architecture is generated reproducibly from a seed. Architectures vary across 8/12/16-bit words, 4-8 registers, randomized opcode bytes, operation subsets, binary operand ordering, zero/carry flag behavior, and optional branch instructions. The same opcode byte can mean unrelated operations on different CPUs.
+Each architecture is reproducible from a seed. Current randomized dimensions include:
 
-The discovery interface exposes only:
+- 8, 12, or 16-bit words;
+- 4-8 registers;
+- 8-13 opaque opcode assignments;
+- operation subsets drawn from arithmetic, Boolean, shifts, immediate loads, compare, and branches;
+- operand direction;
+- zero/carry flag behavior.
+
+The same opcode byte has no global meaning. For example, `0x17` may be `ADD` on one generated machine and `XOR` or `MOV` on another.
+
+The restricted discovery interface exposes only black-box execution:
 
 ```python
 observation = oracle.execute(initial_state, instruction)
 ```
 
-It does not expose the architecture seed, ISA specification, or semantic mapping.
+It does not expose the architecture seed, architecture ID, opcode table, or hidden semantic labels.
 
 ## 30-second example
 
 ```bash
-PYTHONPATH=src python -m machinezero.cli generate --seed 2026
-PYTHONPATH=src python -m machinezero.cli discover --seed 2026 --budget 20 --explorer coverage
-PYTHONPATH=src python demo/demo.py --seed 2026
+machinezero generate --seed 2026
+machinezero discover --seed 2026 --budget 20 --explorer coverage
+machinezero predict examples/programs/test.mz --seed 2026 --budget 20
 ```
 
-To reveal ground truth for debugging only:
+For debugging only, ground truth can be revealed explicitly:
 
 ```bash
-PYTHONPATH=src python -m machinezero.cli inspect --seed 2026 --reveal
+machinezero inspect --seed 2026 --reveal
 ```
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    G[AlienCPU Generator] --> S[Hidden Simulator]
-    S --> O[Restricted Oracle]
-    O --> E[Explorer]
-    E --> C[Observed Transitions]
-    C --> M1[Transformer]
-    C --> M2[System ID Hypotheses]
-    M1 --> P[Prediction]
-    M2 --> P
-    P --> V[Execute Hidden Simulator]
-    V --> R[Metrics]
+    G[AlienCPU generator] --> S[Hidden simulator]
+    S --> O[Restricted oracle]
+    O --> E[Random / Coverage / Model explorer]
+    E --> C[Observed transitions]
+    C --> N[Structured semantic Transformer]
+    C --> H[Enumerative hypotheses]
+    N --> P[Prediction]
+    H --> P
+    P --> V[Execute hidden simulator]
+    V --> M[Exact metrics]
 ```
 
 See [`docs/architecture.md`](docs/architecture.md) for the full data flow.
 
 ## Quick start
 
-Python 3.11+ is required.
+MachineZero requires Python 3.11+.
 
 ```bash
-python -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev]"
-pytest
+python -m pip install --upgrade pip
+python -m pip install -e '.[dev]'
+pytest -q
 machinezero generate --seed 42
 ```
 
-If developing without installation, prefix commands with `PYTHONPATH=src`.
+If developing without an editable install, prefix commands with `PYTHONPATH=src`.
 
 ## Training
 
-The small configuration keeps architecture splits disjoint and is intended for laptop-scale experiments.
+The small reproducible configuration uses **48 training architectures, 8 validation architectures, and 8 completely held-out test architectures**.
 
 ```bash
-PYTHONPATH=src python -m machinezero.training.train \
+python -m machinezero.training.train \
   --data-config configs/data/small.yaml \
   --model-config configs/model/small.yaml \
   --train-config configs/train/default.yaml \
   --out checkpoints/model.pt
 ```
 
-The current small model has **1,103,938 trainable parameters**. The measured training run in this repository used CPU because CUDA was unavailable in the execution environment.
+The current model predicts a latent opcode hypothesis rather than 130 independent output bits. It learns:
+
+```text
+operation family
+operand direction
+zero-flag update behavior
+carry-flag update behavior
+```
+
+and then executes that inferred hypothesis to produce a concrete next state.
+
+The representation includes architecture-independent **observable candidate-consistency features** derived only from black-box transitions. They encode whether generic operation hypotheses are compatible with what was observed; they do not read the hidden ISA specification.
+
+The captured small CPU run trained **1,182,064 parameters** and reduced semantic loss from **1.669392 to 0.408398** over four epochs.
 
 ## Evaluation
+
+Learned model:
+
+```bash
+python -m machinezero.evaluation.evaluate \
+  --checkpoint checkpoints/model.pt \
+  --queries-per-arch 40 \
+  --out results/eval.json
+```
+
+Model-informed active exploration:
+
+```bash
+python -m machinezero.evaluation.evaluate \
+  --checkpoint checkpoints/model.pt \
+  --active \
+  --out results/active_eval.json
+```
 
 System-identification baseline:
 
 ```bash
-PYTHONPATH=src python -m machinezero.evaluation.system_id_eval
+python -m machinezero.evaluation.system_id_eval \
+  --out results/system_id_eval.json
 ```
 
-Transformer baseline:
+Simple baselines:
 
 ```bash
-PYTHONPATH=src python -m machinezero.evaluation.evaluate --checkpoint checkpoints/model.pt
+python -m machinezero.evaluation.baseline_eval \
+  --out results/baselines.json
 ```
 
-All reported test architectures are architecture-level held out. Evaluation verifies predictions by executing the hidden simulator; there is no LLM judge.
+All reported test CPUs are held out at the **architecture level**. Predictions are verified by executing the hidden simulator; there is no LLM judge.
 
 ## CUDA acceleration
 
-`BatchedAlienCPU` performs many transitions in parallel with PyTorch tensors and automatically supports CUDA when available. CPU and CUDA parity is tested when a GPU exists.
+`BatchedAlienCPU` evaluates many transitions in parallel with PyTorch tensors and automatically supports CUDA when available. CPU and CUDA parity is tested when a GPU exists.
 
 ```bash
-PYTHONPATH=src python benchmarks/benchmark_simulator.py
+python benchmarks/benchmark_simulator.py --n 20000
 ```
 
-This repository never hardcodes throughput numbers. `results/benchmark.json` is generated from the current machine.
+On the CPU-only machine used for the captured run:
+
+- scalar Python: **1.00M transitions/s**;
+- batched PyTorch CPU: **11.64M transitions/s**;
+- CUDA: unavailable in that environment, so no GPU number is reported.
+
+Throughput is measured at runtime and written to `results/benchmark.json`; it is not hardcoded by the benchmark.
 
 ## Results
 
-Measured on the current CPU-only environment, using **8 held-out architectures and 320 query transitions per budget point**:
+### Learned model on 8 held-out architectures
 
-| Explorer | Budget | Exact next-state | Register accuracy |
+The primary learned evaluation uses **320 held-out query transitions per budget point**.
+
+| Explorer | Budget | Exact state | Register accuracy | Operation accuracy |
+|---|---:|---:|---:|---:|
+| Coverage | 0 | 15.9% | 83.8% | 14.4% |
+| Coverage | 2 | 27.5% | 86.7% | 33.1% |
+| Coverage | 5 | 30.6% | 88.0% | 40.0% |
+| Coverage | 10 | 59.4% | 96.1% | 69.4% |
+| Coverage | 20 | **66.6%** | **97.5%** | **81.6%** |
+| Coverage | 30 | 65.0% | 97.1% | 75.0% |
+
+The budget-0 row is the learned **no-context** baseline. Accuracy rises sharply once coverage probing has exposed most queried opcodes. The slight budget-30 regression is reported as measured rather than smoothed away; the current context aggregation was trained with shorter contexts and remains a research limitation.
+
+In the captured smaller active-explorer run (**96 queries per budget point**), ModelExplorer reached **37.5% exact at budget 5**, **56.3% at 10**, and **66.7% at 20**. Coverage reached 32.3%, 63.5%, and 64.6% at the same budgets in that run. This is evidence that model-informed selection can be competitive, not a claim that it universally dominates coverage.
+
+### Transparent system-identification baseline
+
+Using **320 held-out queries per budget point**:
+
+| Explorer | Budget | Exact state | Register accuracy |
 |---|---:|---:|---:|
 | Random | 0 | 16.9% | 86.2% |
 | Random | 10 | 50.3% | 94.5% |
@@ -149,38 +222,71 @@ Measured on the current CPU-only environment, using **8 held-out architectures a
 | Coverage | 20 | **90.0%** | **99.6%** |
 | Coverage | 30 | **94.1%** | **99.6%** |
 
-These numbers are from the transparent enumerative system-identification baseline, not the Transformer.
+This baseline is deliberately explicit and interpretable. Its role is to prove that the generated machines are identifiable under a small interaction budget and to provide a strong reference while the learned meta-model improves.
 
-The first Transformer training run reduced bitwise training loss from **0.5509 to 0.4176** over four epochs, but achieved **0% exact next-state accuracy** on the held-out evaluation used here. That result is intentionally reported rather than hidden: the neural representation/objective needs improvement.
+### Simple baselines
 
-Raw outputs live under [`results/`](results/).
+Across 320 held-out transitions:
+
+- random-state predictor: **0.0% exact**;
+- no-op predictor: **20.6% exact**.
+
+Raw measured artifacts live under [`results/`](results/).
 
 ## Repository map
 
-- `src/machinezero/aliencpu/` - architecture generation, scalar simulator, batched simulator, oracle
-- `src/machinezero/data/` - architecture splits, procedural dataset, encoding
-- `src/machinezero/models/` - Transformer and system-identification models
-- `src/machinezero/discovery/` - random, coverage, and uncertainty-driven explorers
+- `src/machinezero/aliencpu/` - architecture generation, scalar simulator, batched simulator, restricted oracle
+- `src/machinezero/data/` - architecture splits, procedural dataset, structured encoding
+- `src/machinezero/models/` - learned Transformer, prediction executor, baselines, system identifier
+- `src/machinezero/discovery/` - random, coverage, and learned experiment selection
 - `src/machinezero/evaluation/` - executable metrics and held-out evaluation
+- `configs/` - reproducible data/model/training settings
 - `benchmarks/` - scalar/PyTorch CPU/CUDA throughput benchmark
 - `demo/` - deterministic contest demo
-- `tests/` - semantic, split, model, and discovery tests
+- `examples/programs/` - fixed-width `.mz` examples
+- `tests/` - generator, simulator, split, model, encoding, prediction, and discovery tests
+
+## Reproduce the MVP
+
+To run the complete small pipeline from the repository root:
+
+```bash
+./scripts/reproduce_mvp.sh
+```
+
+That script runs:
+
+```text
+pytest
+→ train learned model
+→ evaluate learned budget curves
+→ evaluate simple baselines
+→ evaluate system-identification curves
+→ benchmark simulator
+→ run deterministic seed-2026 demo
+```
+
+Every generated result is written under `results/`.
 
 ## Research questions
 
 1. How much interaction is required to identify a novel computational system?
 2. Which experiment-selection strategies maximize information per query?
-3. Can learned context models outperform explicit hypothesis enumeration as architectures become richer?
+3. Can learned context models approach or exceed explicit hypothesis enumeration as architectures become richer?
 4. How does generalization degrade under new word widths, register counts, flags, or operation families?
-5. Which representations make algorithmic state prediction learnable across permuted opcode vocabularies?
+5. Which inductive biases preserve architecture independence while making modular machine semantics learnable?
 
 ## Limitations
 
-The MVP intentionally keeps instructions fixed-width and omits memory. The current neural baseline underperforms the explicit system-identification model. `ModelExplorer` uses MC-dropout uncertainty but has not yet been shown to outperform coverage exploration. Program synthesis is not implemented. CUDA code exists, but this repository's captured benchmark environment has no CUDA device, so no GPU throughput is claimed.
+The MVP intentionally keeps instructions fixed-width and omits memory. The learned model still underperforms explicit hypothesis enumeration and is less stable with contexts longer than those seen during training. ModelExplorer is a simple entropy-plus-novelty policy, not an optimized active-learning algorithm. Program synthesis/goal solving is not implemented. CUDA support exists, but the captured benchmark machine had no CUDA device, so no GPU throughput is claimed.
 
 ## Related work
 
-Relevant areas include active system identification, instruction semantic inference, neural program execution, meta-learning, and reverse engineering. Precise citations should be added only after verification; this repository deliberately avoids fabricated references or novelty claims.
+Relevant areas include active system identification, instruction semantic inference, neural program execution, meta-learning, and reverse engineering. Precise citations should be added only after verification; this repository deliberately avoids fabricated references or sweeping novelty claims.
+
+MachineZero's intended differentiation is narrower:
+
+**cross-architecture meta-learning and active experimental discovery over procedurally generated computational systems with executable hidden ground truth.**
 
 ## Citation
 

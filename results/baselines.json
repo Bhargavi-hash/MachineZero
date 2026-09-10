@@ -1,0 +1,30 @@
+{
+  "held_out_test_seeds": [
+    202656,
+    202657,
+    202658,
+    202659,
+    202660,
+    202661,
+    202662,
+    202663
+  ],
+  "results": [
+    {
+      "model": "random_state",
+      "architectures": 8,
+      "queries": 320,
+      "exact": 0.0,
+      "register_accuracy": 0.0005208333333333333,
+      "flag_accuracy": 0.4890625
+    },
+    {
+      "model": "no_op",
+      "architectures": 8,
+      "queries": 320,
+      "exact": 0.20625,
+      "register_accuracy": 0.8728125000000025,
+      "flag_accuracy": 0.8265625
+    }
+  ]
+}

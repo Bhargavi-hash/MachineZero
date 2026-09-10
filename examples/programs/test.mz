@@ -1,0 +1,5 @@
+# Deterministic example for AlienCPU seed 2026.
+# Format: OPCODE OPERAND_A OPERAND_B (hexadecimal bytes)
+6C 00 01
+C9 01 02
+D8 02 03

@@ -1,5 +1,5 @@
 d_model: 160
-nhead: 5
+nhead: 4
 num_layers: 4
 dim_feedforward: 512
 dropout: 0.1

@@ -1,0 +1,6 @@
+device=cpu parameters=1,182,064 samples=2304
+epoch=1 loss=1.669392
+epoch=2 loss=0.712900
+epoch=3 loss=0.512498
+epoch=4 loss=0.408398
+saved=checkpoints/model.pt

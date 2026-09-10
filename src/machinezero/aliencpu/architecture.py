@@ -1,9 +1,14 @@
 from __future__ import annotations
-from dataclasses import dataclass, asdict
-from typing import Literal
-import json, hashlib
 
-Operation = Literal['MOV','ADD','SUB','XOR','AND','OR','NOT','SHL','SHR','LOAD_IMMEDIATE','COMPARE','JMP','JZ']
+import hashlib
+import json
+from dataclasses import asdict, dataclass
+from typing import Literal
+
+Operation = Literal[
+    "MOV", "ADD", "SUB", "XOR", "AND", "OR", "NOT", "SHL", "SHR", "LOAD_IMMEDIATE", "COMPARE", "JMP", "JZ"
+]
+
 
 @dataclass(frozen=True)
 class OpcodeSpec:
@@ -13,6 +18,7 @@ class OpcodeSpec:
     dst_first: bool = True
     updates_zero: bool = False
     updates_carry: bool = False
+
 
 @dataclass(frozen=True)
 class ArchitectureSpec:
@@ -35,7 +41,7 @@ class ArchitectureSpec:
 
     def to_dict(self) -> dict:
         d = asdict(self)
-        d['opcodes'] = [asdict(x) for x in self.opcodes]
+        d["opcodes"] = [asdict(x) for x in self.opcodes]
         return d
 
     def to_json(self) -> str:
@@ -43,6 +49,6 @@ class ArchitectureSpec:
 
 
 def architecture_id_from_payload(payload: dict) -> str:
-    safe = {k:v for k,v in payload.items() if k not in {'architecture_id'}}
-    blob = json.dumps(safe, sort_keys=True, separators=(',', ':')).encode()
+    safe = {k: v for k, v in payload.items() if k not in {"architecture_id"}}
+    blob = json.dumps(safe, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(blob).hexdigest()[:6]

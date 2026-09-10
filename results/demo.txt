@@ -40,5 +40,5 @@ Held-out 3-instruction program:
   EXACT MATCH
 
 Model: enumerative black-box system identifier
-Transformer checkpoint: separate baseline, 1,103,938 parameters
+Learned checkpoint: separate baseline, 1,182,064 parameters
 Device: cpu

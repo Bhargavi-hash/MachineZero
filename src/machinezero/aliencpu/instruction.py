@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 
 @dataclass(frozen=True)
 class Instruction:
@@ -8,4 +10,4 @@ class Instruction:
     b: int = 0
 
     def __str__(self) -> str:
-        return f'{self.opcode:02X} {self.a:02X} {self.b:02X}'
+        return f"{self.opcode:02X} {self.a:02X} {self.b:02X}"
